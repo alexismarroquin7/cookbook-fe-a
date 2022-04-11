@@ -16,15 +16,21 @@ const findAll = () => async dispatch => {
   });
   try {
     const res = await axios().get('/recipes');
-    console.log('res', res);
     dispatch({
-      type: ACTION.FIND.ALL.SUCCESS
+      type: ACTION.FIND.ALL.SUCCESS,
+      payload: {
+        recipes: res.data 
+      }
     });
     
   } catch (err) {
-    console.log('err', err);
     dispatch({
-      type: ACTION.FIND.ALL.FAIL
+      type: ACTION.FIND.ALL.FAIL,
+      payload: {
+        error: {
+          message: err.response.data.message 
+        }
+      }
     });
     
   }

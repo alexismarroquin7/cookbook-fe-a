@@ -39,7 +39,8 @@ export const RecipeReducer = (state = initialState, action) => {
             ...state.status.error,
             message: ''
           }
-        }
+        },
+        list: action.payload.recipes
       }
     case ACTION.FIND.ALL.FAIL:
       return {
