@@ -12,7 +12,12 @@ export default function UserRecipeItem() {
   const dispatch = useDispatch();
   const router = useRouter();
   
-  const recipe = useSelector(s => s.recipe.item);
+  const recipe = useSelector(s => {
+    return {
+      item: s.recipe.item,
+      loading: s.recipe.loading
+    }
+  });
 
   useEffect(() => {
     if(!router.query.recipe_id) return;
@@ -21,9 +26,10 @@ export default function UserRecipeItem() {
 
   return (
   <Section>
-    {recipe.recipe_id && (
+    {recipe.item.recipe_id && (
       <RecipeItemDetailed 
-        recipe={recipe}
+        recipe={recipe.item}
+        status={{loading: recipe.loading}}
       />
     )}
   </Section>

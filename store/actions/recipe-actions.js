@@ -40,6 +40,17 @@ const ACTION = {
     START: "RECIPE__CREATE--START",
     SUCCESS: "RECIPE__CREATE--SUCCESS",
     FAIL: "RECIPE__CREATE--FAIL"
+  },
+  DELETE: {
+    BY: {
+      RECIPE: {
+        ID: {
+          START: "RECIPE__DELETE__BY__RECIPE__ID--START",
+          SUCCESS: "RECIPE__DELETE__BY__RECIPE__ID--SUCCESS",
+          FAIL: "RECIPE__DELETE__BY__RECIPE__ID--FAIL"
+        }
+      }
+    }
   }
 }
 
@@ -202,6 +213,31 @@ const create = (recipe) => async dispatch => {
   }
 }
 
+const deleteByRecipeId = (recipe_id) => async dispatch => {
+  dispatch({
+    type: ACTION.DELETE.BY.RECIPE.ID.START
+  })
+
+  try {
+    const res = await axios().delete(`/recipes/${recipe_id}`);
+    dispatch({
+      type: ACTION.DELETE.BY.RECIPE.ID.SUCCESS,
+      payload: {
+        recipe_id: res.data
+      }
+    })
+  } catch (err) {
+    dispatch({
+      type: ACTION.DELETE.BY.RECIPE.ID.FAIL,
+      payload: {
+        error: {
+          message: err.response.data.message
+        }
+      }
+    })
+  }
+}
+
 export const RecipeAction = {
   ACTION,
   findAll,
@@ -209,5 +245,6 @@ export const RecipeAction = {
   removeLike,
   like,
   findByUserUsername,
-  create
+  create,
+  deleteByRecipeId
 }

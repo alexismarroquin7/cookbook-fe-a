@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocalStorage } from "../../hooks";
+import { Button, Typography } from "@mui/material";
 
 export default function UserProfile () {
 
@@ -69,11 +70,12 @@ export default function UserProfile () {
         <h3>Recipes</h3>
         
         {typeof window !== 'undefined' && storedUser.username === user.item.username && (
-          <button
+          <Button
+            variant="outlined"
             onClick={() => {
               router.push(`/${user.item.username}/new/recipe`);
             }}
-          >+</button>
+          >+</Button>
         )}
       
       </Grid>
@@ -215,8 +217,14 @@ export default function UserProfile () {
               {rp.recipe_tags.map(rp_tag => {
                 return <Grid
                   key={rp_tag.recipe_tag_id}
+                  bgColor="#1976d2"
+                  color="white"
+                  padding="0 .5rem"
+                  borderRadius="5px"
                 >
-                  <p>#{rp_tag.tag.text}</p>
+                  <Typography
+                    variant="body1"
+                  >#{rp_tag.tag.text}</Typography>
                 </Grid>
               })}
             </Grid>
