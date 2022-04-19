@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 
 // utils
 import { getDurationText } from "../../utils";
+import { Typography } from "@mui/material";
 
 export const RecipeItem = ({recipe}) => {
   const router = useRouter();
@@ -147,8 +148,14 @@ export const RecipeItem = ({recipe}) => {
         return (
         <Grid
           key={rp_tag.recipe_tag_id}
+          bgColor="#1976d2"
+          color="white"
+          borderRadius="5px"
+          padding="0 .5rem"
         >
-          <p>#{rp_tag.tag.text}</p>
+          <Typography>
+            #{rp_tag.tag.text}
+          </Typography>
         </Grid>
         )
       })}

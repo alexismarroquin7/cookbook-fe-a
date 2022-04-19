@@ -1,27 +1,32 @@
+// components
 import { Grid } from "../../components";
-import { Fraction } from "fractional";
+import { Modal, Button, Box, Typography } from "@mui/material";
+import Spinner from "react-svg-spinner";
 
 // icons
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-// utils
-import { getDurationText } from "../../utils";
+// store
+import { RecipeAction } from "../../store";
 
 // hooks
-import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { useLocalStorage, useToggle } from "../../hooks";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { RecipeAction } from "../../store";
-import { Typography } from "@mui/material";
+
+// utils
+import { getDurationText } from "../../utils";
+import { Fraction } from "fractional";
+import { useRouter } from "next/router";
 
 const initialHidden = {
   ingredients: true,
   steps: true
 }
 
-export const RecipeItemDetailed = ({ recipe }) => {
+export const RecipeItemDetailed = ({ recipe, status }) => {
   const {
     name,
     description,
@@ -36,9 +41,13 @@ export const RecipeItemDetailed = ({ recipe }) => {
     recipe_tags
   } = recipe;
 
+  const router = useRouter();
+
   const [ storedUser ] = useLocalStorage('user', { user_id: null });
 
   const [hidden, setHidden] = useState(initialHidden);
+  
+  const {active: open, toggleActive: toggleOpen} = useToggle();
   
   const dispatch = useDispatch();
 
@@ -60,7 +69,78 @@ export const RecipeItemDetailed = ({ recipe }) => {
     >
       <h3>{name}</h3>
       {user.user_id === storedUser.user_id && (
-        <button>Edit</button>
+        <Grid
+          gap="1rem"
+        >
+          <Button
+            variant="outlined"
+            >Edit</Button>
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={() => {
+              toggleOpen();
+            }}
+          >Delete</Button>
+          <Modal
+            open={open}
+            onClose={toggleOpen}
+          >
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '50%',
+                bgcolor: 'background.paper',
+                borderRadius: '5px',
+                boxShadow: 24,
+                p: '1rem',
+
+                display: 'flex',
+                flexFlow: 'column wrap',
+                justifyContent: 'space-between',
+                gap: '1rem'
+              }}
+            >
+
+              <Typography
+                variant="h6"
+              >
+                Are you sure you want to delete this recipe?
+                {status.loading && <Spinner/>}
+              </Typography>
+            
+              <Grid
+                width="100%"
+                gap="1rem"
+              >
+                <Button
+                  variant="contained"
+                  color="error"
+                  fullWidth
+                  onClick={() => {
+                    dispatch(RecipeAction.deleteByRecipeId(recipe.recipe_id));
+                    router.push(`/${router.query.username}`)
+                  }}
+                >
+                  Delete
+                </Button>
+
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  onClick={toggleOpen}
+                >
+                  Cancel      
+                </Button>
+                
+              </Grid>
+            
+            </Box>
+          </Modal>
+        </Grid>
       )}
     </Grid>
 

@@ -230,6 +230,45 @@ export const RecipeReducer = (state = initialState, action) => {
         }
       }
 
+    case ACTION.DELETE.BY.RECIPE.ID.START:
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          loading: true,
+          error: {
+            ...state.status.error,
+            message: ''
+          }
+        }
+      }
+    case ACTION.DELETE.BY.RECIPE.ID.SUCCESS:
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          loading: false,
+          error: {
+            ...state.status.error,
+            message: ''
+          }
+        },
+        list: state.list.filter(it => it.recipe_id !== action.payload.recipe_id),
+        item: initialState.item
+      }
+    case ACTION.DELETE.BY.RECIPE.ID.FAIL:
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          loading: false,
+          error: {
+            ...state.status.error,
+            message: action.payload.error.message
+          }
+        }
+      }
+
     default:
       return state;
   }
