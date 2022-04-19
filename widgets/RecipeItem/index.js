@@ -1,7 +1,33 @@
-import { Border, Grid } from "../../components";
+// components
+import { Grid } from "../../components";
+
+// icons
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+
+// hooks
+import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
+
+// utils
+import { getDurationText } from "../../utils";
 
 export const RecipeItem = ({recipe}) => {
+  const router = useRouter();
+
+  const {
+    auth
+  } = useSelector(s => {
+    return {
+      auth: {
+        loggedIn: s.auth.loggedIn,
+        user: {
+          user_id: s.auth.user.user_id
+        }
+      }
+    }
+  })
   
   const { 
     name,
@@ -11,30 +37,12 @@ export const RecipeItem = ({recipe}) => {
     difficulty,
     servings,
     recipe_ingredients,
-    recipe_steps
+    recipe_steps,
+    recipe_tags,
+    user
   } = recipe;
 
-  const getDurationText = ({hours = 0, minutes = 0}) => {
-    let text = '';
-    
-    if(hours === 0){
-      text += '';
-    } else if(hours === 1){
-      text += `${hours}HR`;
-    } else {
-      text += `${hours}HRS`;
-    }
-
-    if(minutes === 0){
-      text += '';
-    } else if(minutes === 1){
-      text += ` ${minutes}MIN`;
-    } else {
-      text += ` ${minutes}MINS`;
-    }
-    
-    return text;
-  }
+  
 
   return (
   <Grid
@@ -46,8 +54,29 @@ export const RecipeItem = ({recipe}) => {
       direction="column wrap"
       gap="1rem"
     >
-      <h4>{name}</h4>
-      <p>{difficulty}</p>
+      <Grid
+        align="center"
+        gap="1rem"
+      >
+        <AccountCircleIcon/>
+        <p>@{user.username}</p>
+      </Grid>
+
+      <Grid
+        align="center"
+        gap="1rem"
+      >
+
+        <h4>{name}</h4> 
+
+        <button
+          onClick={() => {
+            router.push(`/${user.username}/recipes/${recipe.recipe_id}`);
+          }}
+        >{'>'}</button>
+      </Grid>
+    
+      <p>difficulty: {difficulty}</p>
       <p>servings: {servings}</p>
       <p>ingredients: {recipe_ingredients.length}</p>
       <p>steps: {recipe_steps.length}</p>
@@ -104,11 +133,26 @@ export const RecipeItem = ({recipe}) => {
     <Grid
       align="center"
       gap=".5rem"
-    >
-      <FavoriteIcon/>
+    >      
+      {new Set(recipe_likes.map(rp_like => rp_like.user.user_id)).has(auth.user.user_id) ? <FavoriteIcon/> : <FavoriteBorderIcon/>} 
       <p>{recipe_likes.length} </p>
     </Grid>
     
+    <Grid
+      width="100%"
+      gap="1rem"
+    >
+
+      {recipe_tags.map(rp_tag => {
+        return (
+        <Grid
+          key={rp_tag.recipe_tag_id}
+        >
+          <p>#{rp_tag.tag.text}</p>
+        </Grid>
+        )
+      })}
+    </Grid>
 
   </Grid>
   )
