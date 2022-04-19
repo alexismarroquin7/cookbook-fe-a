@@ -1,6 +1,6 @@
-import { AuthAction } from "../actions"
+import { UserAction } from "../actions";
 
-const { ACTION } = AuthAction;
+const { ACTION } = UserAction;
 
 const initialState = {
   status: {
@@ -9,16 +9,15 @@ const initialState = {
       message: ''
     }
   },
-  loggedIn: false,
-  user: {
+  list: [],
+  item: {
     user_id: null
-  },
-  token: ''
+  }
 }
 
-export const AuthReducer = (state = initialState, action) => {
-  switch(action.type){
-    case ACTION.LOGIN.START:
+export const UserReducer = (state = initialState, { type, payload }) => {
+  switch(type){
+    case ACTION.FIND.BY.USERNAME.START:
       return {
         ...state,
         status: {
@@ -30,10 +29,7 @@ export const AuthReducer = (state = initialState, action) => {
           }
         }
       }
-    case ACTION.LOGIN.SUCCESS:
-      localStorage.setItem('token', action.payload.token);
-      localStorage.setItem('user', JSON.stringify(action.payload.user));
-      localStorage.setItem('loggedIn', JSON.stringify(true));
+    case ACTION.FIND.BY.USERNAME.SUCCESS:
       return {
         ...state,
         status: {
@@ -44,11 +40,9 @@ export const AuthReducer = (state = initialState, action) => {
             message: ''
           }
         },
-        user: action.payload.user,
-        token: action.payload.token,
-        loggedIn: true
+        item: payload.user
       }
-    case ACTION.LOGIN.FAIL:
+    case ACTION.FIND.BY.USERNAME.FAIL:
       return {
         ...state,
         status: {
@@ -56,10 +50,11 @@ export const AuthReducer = (state = initialState, action) => {
           loading: false,
           error: {
             ...state.status.error,
-            message: action.payload.error.message
+            message: payload.error.message
           }
-        }
+        },
       }
+
     default:
       return state;
   }

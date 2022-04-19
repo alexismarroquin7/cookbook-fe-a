@@ -24,7 +24,6 @@ const store = createStore(
   middleware
 );
 
-
 store.subscribe(() => {
   if(typeof window !== "undefined"){
     localStorage.setItem(

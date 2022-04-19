@@ -7,6 +7,8 @@ const StyledForm = styled.form`
   align-items: ${({align}) => align ? align : 'flex-start'};
   justify-content: ${({justify}) => justify ? justify : 'flex-start'};
   gap: ${({gap}) => gap ? gap : '0'};
+  padding: ${({padding}) => padding ? padding : '0'};
+  border: ${({border}) => border ? border : '0'};
 `
 
 export const Form = (props) => {

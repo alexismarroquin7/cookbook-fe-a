@@ -1,3 +1,5 @@
-export * from "./RecipeList"
-export * from "./RecipeItem"
 export * from "./LoginForm"
+export * from "./RecipeForm"
+export * from "./RecipeItem"
+export * from "./RecipeItemDetailed"
+export * from "./RecipeList"
