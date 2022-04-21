@@ -41,6 +41,17 @@ const ACTION = {
     SUCCESS: "RECIPE__CREATE--SUCCESS",
     FAIL: "RECIPE__CREATE--FAIL"
   },
+  UPDATE: {
+    BY: {
+      RECIPE: {
+        ID: {
+          START: "RECIPE__UPDATE__BY__RECIPE__ID--START",
+          SUCCESS: "RECIPE__UPDATE__BY__RECIPE__ID--SUCCESS",
+          FAIL: "RECIPE__UPDATE__BY__RECIPE__ID--FAIL"
+        }
+      }
+    }
+  },
   DELETE: {
     BY: {
       RECIPE: {
@@ -213,6 +224,32 @@ const create = (recipe) => async dispatch => {
   }
 }
 
+const updateByRecipeId = (recipe_id, changes) => async dispatch => {
+  dispatch({
+    type: ACTION.UPDATE.BY.RECIPE.ID.START
+  })
+
+  try {
+    const res = await axios().put(`/recipes/${recipe_id}`, changes);
+    dispatch({
+      type: ACTION.UPDATE.BY.RECIPE.ID.SUCCESS,
+      payload: {
+        recipe: res.data
+      }
+    })
+
+  } catch (err) {
+    dispatch({
+      type: ACTION.UPDATE.BY.RECIPE.ID.FAIL,
+      payload: {
+        error: {
+          message: err.response.data.message
+        }
+      }
+    })
+  }
+}
+
 const deleteByRecipeId = (recipe_id) => async dispatch => {
   dispatch({
     type: ACTION.DELETE.BY.RECIPE.ID.START
@@ -246,5 +283,6 @@ export const RecipeAction = {
   like,
   findByUserUsername,
   create,
+  updateByRecipeId,
   deleteByRecipeId
 }

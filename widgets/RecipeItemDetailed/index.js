@@ -7,6 +7,9 @@ import Spinner from "react-svg-spinner";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import HistoryToggleOffIcon from '@mui/icons-material/HistoryToggleOff';
+import LocalDiningIcon from '@mui/icons-material/LocalDining';
 
 // store
 import { RecipeAction } from "../../store";
@@ -74,7 +77,10 @@ export const RecipeItemDetailed = ({ recipe, status }) => {
         >
           <Button
             variant="outlined"
-            >Edit</Button>
+            onClick={()=> {
+              router.push(`/${router.query.username}/recipes/${router.query.recipe_id}/edit`);
+            }}
+          >Edit</Button>
           <Button
             variant="outlined"
             color="error"
@@ -199,22 +205,26 @@ export const RecipeItemDetailed = ({ recipe, status }) => {
     
     <Grid
       width="100%"
-      justify="space-around"
+      direction="column wrap"
       gap="1rem"
     >
+      
       <Grid
-        direction="column wrap"
-        align="center"
+        gap="1rem"
+        align="center"  
       >
         <h4>PREP</h4>
+        <HistoryToggleOffIcon/>
         <p>{getDurationText(prep_duration)}</p>
       </Grid>
       
+      
       <Grid
-        direction="column wrap"
-        align="center"
+        gap="1rem"
+        align="center"  
       >
         <h4>COOK</h4>
+        <AccessTimeIcon/>
         <p>{getDurationText(cook_duration)}</p>
       </Grid>
 
@@ -222,19 +232,23 @@ export const RecipeItemDetailed = ({ recipe, status }) => {
     
     <Grid
       width="100%"
-      justify="space-around"
+      direction="column wrap"
       gap="1rem"
     >
+      
       <Grid
-        direction="column wrap"
-        align="center"
+        gap="1rem"
+        align="center"  
       >
         <h4>{`SERVING${servings === 1 ? '' : 'S'}`}</h4>
+        <LocalDiningIcon/>
         <p>{servings}</p> 
       </Grid>
 
+
+
       <Grid
-        direction="column wrap"
+        gap="1rem"
         align="center"
       >
         <h4>DIFFICULTY</h4>
@@ -350,10 +364,17 @@ export const RecipeItemDetailed = ({ recipe, status }) => {
         return (
         <Grid
           key={rp_tag.recipe_tag_id}
+          bgColor="#1976d2"
+          color="white"
+          borderRadius="5px"
+          padding="0 .5rem"
         >
+
           <a
             href={`/explore?tag=${rp_tag.tag.text}`}
-          >#{rp_tag.tag.text}</a>
+          >
+            <Typography>#{rp_tag.tag.text}</Typography>
+          </a>
         </Grid>
       )})}
     </Grid>

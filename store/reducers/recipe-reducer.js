@@ -269,6 +269,53 @@ export const RecipeReducer = (state = initialState, action) => {
         }
       }
 
+    case ACTION.UPDATE.BY.RECIPE.ID.START:
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          loading: true,
+          error: {
+            ...state.status.error,
+            message: ''
+          }
+        }
+      }
+    case ACTION.UPDATE.BY.RECIPE.ID.SUCCESS:
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          loading: false,
+          error: {
+            ...state.status.error,
+            message: ''
+          }
+        },
+        list: state.list.map(r => {
+          
+          if(r.recipe_id === action.payload.recipe.recipe_id){
+            return action.payload.recipe;
+          } else {
+            return r;
+          }
+          
+        }),
+        item: action.payload.recipe
+      }
+    case ACTION.UPDATE.BY.RECIPE.ID.FAIL:
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          loading: false,
+          error: {
+            ...state.status.error,
+            message: action.payload.error.message
+          }
+        }
+      }
+
     default:
       return state;
   }

@@ -35,6 +35,7 @@ const initialOptions = {
   cuisine_types: [],
   tags: [],
   measurement_units: [],
+  ingredients: [],
   difficulty: [
     {
       id: uuid(),
@@ -51,27 +52,7 @@ const initialOptions = {
   ]
 }
 
-const initialValues = {
-  name: '',
-  description: '',
-  servings: 0,
-  cuisine_type: '',
-  difficulty: '',
-  prep_duration: {
-    hours: 0,
-    minutes: 0
-  },
-  cook_duration: {
-    hours: 0,
-    minutes: 0
-  },
-  ingredients: [],
-  steps: [],
-  tags: [],
-  tag: ''
-}
-
-export const RecipeForm = () => {
+export const RecipeForm = ({ initialValues }) => {
   
   const router = useRouter();
   const dispatch = useDispatch();
@@ -132,10 +113,8 @@ export const RecipeForm = () => {
     
     fetchOptions();
   }, []);
-  useEffect(() => {
-    console.log(values);
-
-  },[values])
+  
+  useEffect(() => console.log('values', values), [values])
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -347,7 +326,14 @@ export const RecipeForm = () => {
       user_id: storedUser.user_id
     }
 
-    dispatch(RecipeAction.create(newRecipe));
+    if(router.query.recipe_id){
+      dispatch(RecipeAction.updateByRecipeId(router.query.recipe_id, newRecipe));
+      router.push(`/${router.query.username}/recipes/${router.query.recipe_id}`);
+
+    } else {
+
+      dispatch(RecipeAction.create(newRecipe));
+    }
   }
 
   return (
@@ -1053,7 +1039,7 @@ export const RecipeForm = () => {
           router.push(`/${router.query.username}`)
         }}
       >Cancel</Button>
-      <Button variant="contained" type="submit">Submit</Button>
+      <Button variant="contained" type="submit">{router.query.recipe_id ? 'Update' : 'Submit'}</Button>
     </Grid>
   </Form>
   );
