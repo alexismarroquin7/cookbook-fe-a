@@ -21,6 +21,7 @@ if(typeof window !== "undefined"){
 const middleware = applyMiddleware(thunk, logger);
 const store = createStore(
   rootReducer,
+  persistedState,
   middleware
 );
 

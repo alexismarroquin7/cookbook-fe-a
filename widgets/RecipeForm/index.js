@@ -7,7 +7,7 @@ import { TextField, Typography, MenuItem, Button } from "@mui/material";
 // hooks
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocalStorage } from "../../hooks";
 
 // utils
@@ -59,8 +59,12 @@ export const RecipeForm = ({ initialValues }) => {
 
   const [values, setValues] = useState(initialValues);
   const [options, setOptions] = useState(initialOptions);
-
-  const [storedUser] = useLocalStorage('user', { user_id: null });
+  
+  const {auth} = useSelector(({auth}) => {
+    return {
+      auth
+    };
+  });
 
   useEffect(() => {
     const fetchCuisineTypeOptions = async () => {
@@ -254,7 +258,8 @@ export const RecipeForm = ({ initialValues }) => {
         values.difficulty.trim().length === 0 ||
         Number(values.servings) === 0 ||
         values.ingredients.length === 0 ||
-        values.steps.length === 0
+        values.steps.length === 0 ||
+        auth.user.user_id === null
       ){
         valid = false;
         
@@ -323,7 +328,7 @@ export const RecipeForm = ({ initialValues }) => {
         }
       }),
       tags: values.tags,
-      user_id: storedUser.user_id
+      user_id: auth.user.user_id
     }
 
     if(router.query.recipe_id){

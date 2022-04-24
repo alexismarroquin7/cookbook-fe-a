@@ -3,7 +3,9 @@ import { LoginForm } from "../widgets"
 
 export default function Login() {
   return (
-  <Section>
+  <Section
+    margin="2rem 0"
+  >
     <LoginForm/>
   </Section>
   )

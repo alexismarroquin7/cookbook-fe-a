@@ -10,6 +10,7 @@ const StyledSection = styled.section`
   justify-content: center;
   padding: ${({padding}) => padding ? padding : '0 1rem'};
   gap: ${({gap}) => gap ? gap : '0'};
+  margin: ${({margin}) => margin ? margin : '0'};
 `
 
 export const Section = (props) => {
