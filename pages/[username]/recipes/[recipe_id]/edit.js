@@ -69,11 +69,6 @@ export default function EditRecipe(){
     })
   }, [recipe]);
   
-  useEffect(() => {
-    console.log('🔥', recipe)
-    console.log('😀', initialValuesToUse)
-  }, [initialValuesToUse, recipe])
-
   return (
   <Section>
     {initialValuesToUse.name !== '' && <RecipeForm initialValues={initialValuesToUse}/>}

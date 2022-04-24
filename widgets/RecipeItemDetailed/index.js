@@ -17,7 +17,7 @@ import { RecipeAction } from "../../store";
 // hooks
 import { useLocalStorage, useToggle } from "../../hooks";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 // utils
 import { getDurationText } from "../../utils";
@@ -46,8 +46,12 @@ export const RecipeItemDetailed = ({ recipe, status }) => {
 
   const router = useRouter();
 
-  const [ storedUser ] = useLocalStorage('user', { user_id: null });
-
+  const { auth } = useSelector(({auth}) => {
+    return {
+      auth
+    }
+  })
+  
   const [hidden, setHidden] = useState(initialHidden);
   
   const {active: open, toggleActive: toggleOpen} = useToggle();
@@ -71,7 +75,7 @@ export const RecipeItemDetailed = ({ recipe, status }) => {
       align="center"
     >
       <h3>{name}</h3>
-      {user.user_id === storedUser.user_id && (
+      {user.user_id === auth.user.user_id && (
         <Grid
           gap="1rem"
         >
@@ -156,12 +160,21 @@ export const RecipeItemDetailed = ({ recipe, status }) => {
       align="center"
     >
       <AccountCircleIcon/>
+      
+      <Grid
+        direction="column wrap"
+      >
+        <Typography
+          variant="h6"
+        >{user.display_name}</Typography>
         <a
           href={`/${user.username}`}
           style={{
             textDecoration: 'underline'
           }}
         >@{user.username}</a>
+      </Grid>
+
     </Grid>
     
     
@@ -170,13 +183,13 @@ export const RecipeItemDetailed = ({ recipe, status }) => {
       align="center"
     >
       
-      {new Set(recipe_likes.map(rp_like => rp_like.user.user_id)).has(storedUser.user_id) ? (
+      {new Set(recipe_likes.map(rp_like => rp_like.user.user_id)).has(auth.user.user_id) ? (
         <FavoriteIcon 
           style={{
             color: "#fb3958"
           }}
           onClick={() => {
-            const [ recipe_like ] = recipe_likes.filter(rp_like => rp_like.user.user_id === storedUser.user_id);
+            const [ recipe_like ] = recipe_likes.filter(rp_like => rp_like.user.user_id === auth.user.user_id);
             dispatch(RecipeAction.removeLike(recipe_like.recipe_like_id));
           }}
         />
@@ -188,9 +201,9 @@ export const RecipeItemDetailed = ({ recipe, status }) => {
           }}
           
           onClick={() => {
-            if(!storedUser.user_id) return;
+            if(!auth.user.user_id) return;
             dispatch(RecipeAction.like({
-              user_id: storedUser.user_id,
+              user_id: auth.user.user_id,
               recipe_id: recipe.recipe_id
             }));
           }}

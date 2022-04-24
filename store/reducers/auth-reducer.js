@@ -31,9 +31,6 @@ export const AuthReducer = (state = initialState, action) => {
         }
       }
     case ACTION.LOGIN.SUCCESS:
-      localStorage.setItem('token', action.payload.token);
-      localStorage.setItem('user', JSON.stringify(action.payload.user));
-      localStorage.setItem('loggedIn', JSON.stringify(true));
       return {
         ...state,
         status: {
