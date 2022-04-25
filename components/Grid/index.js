@@ -14,6 +14,13 @@ const StyledGrid = styled.div`
   color: ${({color}) => color ? color : 'auto'};
   width: ${({width}) => width ? width : 'auto'};
   border-radius: ${({borderRadius}) => borderRadius ? borderRadius : '0'};
+  box-shadow: ${({boxShadow}) => boxShadow ? boxShadow : '0'};
+  position: ${({position}) => position ? position : ''};
+  top: ${({top}) => top ? top : ''};
+  bottom: ${({bottom}) => bottom ? bottom : ''};
+  right: ${({right}) => right ? right : ''};
+  left: ${({left}) => left ? left : ''};
+
 `
 
 export const Grid = (props) => (
