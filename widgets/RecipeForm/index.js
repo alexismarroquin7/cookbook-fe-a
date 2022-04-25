@@ -117,8 +117,6 @@ export const RecipeForm = ({ initialValues }) => {
     
     fetchOptions();
   }, []);
-  
-  useEffect(() => console.log('values', values), [values])
 
   const handleChange = e => {
     const { name, value } = e.target;

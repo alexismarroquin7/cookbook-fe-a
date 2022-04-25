@@ -9,6 +9,7 @@ import logger from 'redux-logger';
 import { ThemeProvider } from 'styled-components'
 import { GlobalStyles, theme } from "../styles/theme";
 import '../styles/globals.css'
+import { MobileNav } from "../widgets/MobileNav";
 
 let persistedState = {};
 
@@ -40,6 +41,7 @@ function MyApp({ Component, pageProps }) {
     <ThemeProvider theme={theme.light}>
       <GlobalStyles/>
       <Component {...pageProps} />
+      <MobileNav/>
     </ThemeProvider>
   </Provider>
   )

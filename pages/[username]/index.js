@@ -343,7 +343,7 @@ export default function UserProfile () {
               align="center"
             >
               
-              {new Set(rp.recipe_likes.map(rp_like => rp_like.user.user_id)).has(auth.user.user_id) ? (
+              {rp.recipe_likes && new Set(rp.recipe_likes.map(rp_like => rp_like.user.user_id)).has(auth.user.user_id) ? (
                 <FavoriteIcon 
                   style={{
                     color: "#fb3958"
