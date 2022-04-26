@@ -39,7 +39,12 @@ const ACTION = {
   CREATE: {
     START: "RECIPE__CREATE--START",
     SUCCESS: "RECIPE__CREATE--SUCCESS",
-    FAIL: "RECIPE__CREATE--FAIL"
+    FAIL: "RECIPE__CREATE--FAIL",
+    COMMENT: {
+      START: "RECIPE__CREATE__COMMENT--START",
+      SUCCESS: "RECIPE__CREATE__COMMENT--SUCCESS",
+      FAIL: "RECIPE__CREATE__COMMENT--FAIL",
+    }
   },
   UPDATE: {
     BY: {
@@ -61,6 +66,11 @@ const ACTION = {
           FAIL: "RECIPE__DELETE__BY__RECIPE__ID--FAIL"
         }
       }
+    },
+    COMMENT: {
+      START: "RECIPE__DELETE__COMMENT--START",
+      SUCCESS: "RECIPE__DELETE__COMMENT--SUCCESS",
+      FAIL: "RECIPE__DELETE__COMMENT--FAIL"
     }
   }
 }
@@ -275,6 +285,56 @@ const deleteByRecipeId = (recipe_id) => async dispatch => {
   }
 }
 
+const comment = ({recipe_id, user_id, text = ''}) => async dispatch => {
+  dispatch({
+    type: ACTION.CREATE.COMMENT.START
+  })
+
+  try {
+    const res = await axios().post('/recipe_comments', {recipe_id, user_id, text});
+    dispatch({
+      type: ACTION.CREATE.COMMENT.SUCCESS,
+      payload: {
+        recipe_comment: res.data
+      }
+    })
+  } catch (err) {
+    dispatch({
+      type: ACTION.CREATE.COMMENT.FAIL,
+      payload: {
+        error: {
+          message: err.response.data.message
+        }
+      }
+    })
+  }
+}
+
+const deleteComment = (recipe_comment_id) => async dispatch => {
+  dispatch({
+    type: ACTION.DELETE.COMMENT.START
+  })
+
+  try {
+    const res = await axios().delete(`/recipe_comments/${recipe_comment_id}`);
+    dispatch({
+      type: ACTION.DELETE.COMMENT.SUCCESS,
+      payload: {
+        recipe_comment_id: res.data.recipe_comment_id
+      }
+    })
+  } catch (err) {
+    dispatch({
+      type: ACTION.DELETE.COMMENT.FAIL,
+      payload: {
+        error: {
+          message: err.response.data.message
+        }
+      }
+    })
+  }
+}
+
 export const RecipeAction = {
   ACTION,
   findAll,
@@ -284,5 +344,7 @@ export const RecipeAction = {
   findByUserUsername,
   create,
   updateByRecipeId,
-  deleteByRecipeId
+  deleteByRecipeId,
+  comment,
+  deleteComment
 }

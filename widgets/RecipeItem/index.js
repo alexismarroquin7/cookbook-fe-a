@@ -2,9 +2,11 @@
 import { Grid } from "../../components";
 
 // icons
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { 
+  Favorite as FavoriteIcon,
+  FavoriteBorder as FavoriteBorderIcon,
+  Comment as CommentIcon
+} from '@mui/icons-material';
 
 // hooks
 import { useSelector } from "react-redux";
@@ -12,7 +14,7 @@ import { useRouter } from "next/router";
 
 // utils
 import { getDurationText } from "../../utils";
-import { Typography } from "@mui/material";
+import { Paper, Typography } from "@mui/material";
 
 export const RecipeItem = ({recipe}) => {
   const router = useRouter();
@@ -29,138 +31,163 @@ export const RecipeItem = ({recipe}) => {
       }
     }
   })
-  
-  const { 
-    name,
-    prep_duration,
-    cook_duration,
-    recipe_likes,
-    difficulty,
-    servings,
-    recipe_ingredients,
-    recipe_steps,
-    recipe_tags,
-    user
-  } = recipe;
-
-  
 
   return (
-  <Grid
-    padding="1rem"
-    border="1px solid black"
-    borderRadius="5px"
+  <Paper
+    elevation={2}
   >
-    <Grid
+    <Grid  
+      width="100%"
       direction="column wrap"
-      gap="1rem"
+      padding="1rem"
+      borderRadius="5px"
     >
-      <Grid
-        align="center"
-        gap="1rem"
-      >
-        <AccountCircleIcon/>
-        <p>@{user.username}</p>
-      </Grid>
 
       <Grid
+        width="100%"
+        justify="space-between"
         align="center"
-        gap="1rem"
       >
-
-        <h4>{name}</h4> 
-
+        <Typography
+          variant="h6"
+        >{recipe.name}</Typography>
         <button
           onClick={() => {
-            router.push(`/${user.username}/recipes/${recipe.recipe_id}`);
+            router.push(`/${recipe.user.username}/recipes/${recipe.recipe_id}`);
           }}
         >{'>'}</button>
       </Grid>
-    
-      <p>difficulty: {difficulty}</p>
-      <p>servings: {servings}</p>
-      <p>ingredients: {recipe_ingredients.length}</p>
-      <p>steps: {recipe_steps.length}</p>
-    </Grid>
-    
-    <Grid
-      width="100%"
-      direction="column wrap"
-    >
+
+      <p>@{recipe.user.username}</p>
+
+      <p>{recipe.cuisine_type.name}</p>
+      
+      <p>{recipe.description}</p>
       
       <Grid
-        gap="1rem"
-        border=".1rem solid black"
-        borderRadius="5px"
-        padding="1rem"
-        align="center"
+        width="100%"
+        justify="space-around"
       >
         <Grid
-          width="100%"
-          justify="center"
+          direction="column wrap"
+          align="center"
         >
-          <p>Duration</p>
+          <h4>PREP</h4>
+          <p>{getDurationText(recipe.prep_duration)}</p>
         </Grid>
         
         <Grid
-          width="100%"
-          justify="center"
-          gap="1rem"
+          direction="column wrap"
+          align="center"
         >
-        
-          <Grid
-            direction="column wrap"
-            align="center"
-          >
-            <p>PREP</p>
-            <p>{`${getDurationText(prep_duration)}`}</p>
-          </Grid>
-          
-          <Grid
-            direction="column wrap"
-            align="center"
-
-          >
-            <p>COOK</p>
-            <p>{`${getDurationText(cook_duration)}`}</p>
-          </Grid>
-
+          <h4>COOK</h4>
+          <p>{getDurationText(recipe.cook_duration)}</p>
         </Grid>
-
       </Grid>
-    
-    </Grid>
-
-    <Grid
-      align="center"
-      gap=".5rem"
-    >      
-      {new Set(recipe_likes.map(rp_like => rp_like.user.user_id)).has(auth.user.user_id) ? <FavoriteIcon/> : <FavoriteBorderIcon/>} 
-      <p>{recipe_likes.length} </p>
-    </Grid>
-    
-    <Grid
-      width="100%"
-      gap="1rem"
-    >
-
-      {recipe_tags.map(rp_tag => {
-        return (
+      
+      <Grid
+        width="100%"
+        justify="space-around"
+      >
         <Grid
-          key={rp_tag.recipe_tag_id}
-          bgColor="#1976d2"
-          color="white"
-          borderRadius="5px"
-          padding="0 .5rem"
+          direction="column wrap"
+          align="center"
         >
-          <Typography>
-            #{rp_tag.tag.text}
-          </Typography>
+          <h4>SERVINGS</h4>
+          <p>{recipe.servings}</p>
         </Grid>
-        )
-      })}
-    </Grid>
+        
+        <Grid
+          direction="column wrap"
+          align="center"
+        >
+          <h4>DIFFICULTY</h4>
+          <p>{recipe.difficulty.toUpperCase()}</p>
+        </Grid>
+      </Grid>
 
-  </Grid>
+      <Grid
+        width="100%"
+        justify="space-around"
+      >
+        <Grid
+          direction="column wrap"
+        >
+          <h4>INGREDIENTS</h4>
+          <p>{recipe.recipe_ingredients.length}</p>
+        </Grid>
+        
+        <Grid
+          direction="column wrap"
+        >
+          <h4>STEPS</h4>
+          <p>{recipe.recipe_steps.length}</p>
+        </Grid>
+      </Grid>
+      
+      <Grid
+        gap=".5rem"
+        align="center"
+      >
+        
+        {recipe.recipe_likes && new Set(recipe.recipe_likes.map(rp_like => rp_like.user.user_id)).has(auth.user.user_id) ? (
+          <FavoriteIcon 
+            style={{
+              color: "#fb3958"
+            }}
+            onClick={() => {
+              if(!auth.user.user_id) return;
+              const [ recipe_like ] = recipe.recipe_likes.filter(rp_like => rp_like.user.user_id === auth.user.user_id);
+              dispatch(RecipeAction.removeLike(recipe_like.recipe_like_id));
+            }}
+          />
+        
+        ) : (
+          <FavoriteBorderIcon
+            style={{
+              color: "#fb3958"
+            }}
+            
+            onClick={() => {
+              if(!auth.user.user_id) return;
+              dispatch(RecipeAction.like({
+                user_id: auth.user.user_id,
+                recipe_id: recipe.recipe_id
+              }));
+            }}
+          />
+        )}
+        
+        <p>{recipe.recipe_likes.length} {`like${recipe.recipe_likes.length === 1 ? '' : 's'}`}</p>
+      </Grid>
+
+      <Grid
+        align="center"
+        gap=".5rem"
+      >
+        <CommentIcon />
+        <p>{recipe.recipe_comments.length} comments</p>
+      </Grid>
+
+      <Grid
+        width="100%"
+        gap="1rem"
+      >
+        {recipe.recipe_tags.map(rp_tag => {
+          return <Grid
+            key={rp_tag.recipe_tag_id}
+            bgColor="#1976d2"
+            color="white"
+            padding="0 .5rem"
+            borderRadius="5px"
+          >
+            <Typography
+              variant="body1"
+            >#{rp_tag.tag.text}</Typography>
+          </Grid>
+        })}
+      </Grid>
+    </Grid>
+  </Paper>
   )
 }

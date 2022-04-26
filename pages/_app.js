@@ -10,6 +10,7 @@ import { ThemeProvider } from 'styled-components'
 import { GlobalStyles, theme } from "../styles/theme";
 import '../styles/globals.css'
 import { MobileNav } from "../widgets/MobileNav";
+import { Grid } from "../components";
 
 let persistedState = {};
 
@@ -40,8 +41,12 @@ function MyApp({ Component, pageProps }) {
   <Provider store={store}>
     <ThemeProvider theme={theme.light}>
       <GlobalStyles/>
-      <Component {...pageProps} />
-      <MobileNav/>
+      <Grid
+        padding="0 0 8rem 0"
+      >
+        <Component {...pageProps} />
+        <MobileNav/>
+      </Grid>
     </ThemeProvider>
   </Provider>
   )
