@@ -2,6 +2,7 @@
 import { Grid } from "../../components";
 import { Modal, Button, Box, Typography } from "@mui/material";
 import Spinner from "react-svg-spinner";
+import Link from "next/link";
 
 // icons
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -10,12 +11,13 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import HistoryToggleOffIcon from '@mui/icons-material/HistoryToggleOff';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
+import CommentIcon from "@mui/icons-material/Comment"
 
 // store
 import { RecipeAction } from "../../store";
 
 // hooks
-import { useLocalStorage, useToggle } from "../../hooks";
+import { useToggle } from "../../hooks";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -41,7 +43,8 @@ export const RecipeItemDetailed = ({ recipe, status }) => {
     prep_duration,
     cook_duration,
     user,
-    recipe_tags
+    recipe_tags,
+    recipe_comments
   } = recipe;
 
   const router = useRouter();
@@ -212,6 +215,19 @@ export const RecipeItemDetailed = ({ recipe, status }) => {
       )}
       
       <p>{recipe_likes.length} {`like${recipe_likes.length === 1 ? '' : 's'}`}</p>
+    </Grid>
+
+    <Grid
+      align="center"
+      gap=".5rem"
+    >
+      <Link
+        href={`/${router.query.username}/recipes/${router.query.recipe_id}/comments`}
+        passHref
+      >
+        <CommentIcon />
+      </Link>
+      <p>{recipe_comments.length} comments</p>
     </Grid>
     
     {description && <p>{description}</p>}

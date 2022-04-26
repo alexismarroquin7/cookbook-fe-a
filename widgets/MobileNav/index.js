@@ -28,8 +28,6 @@ export const MobileNav = () => {
 
   useEffect(() => {
     const { route } = router;
-    
-    console.log('route',route)
 
     if(route.slice(0, 1) === '/'){
       setSelected('home');

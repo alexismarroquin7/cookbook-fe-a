@@ -9,18 +9,8 @@ const sharedTheme = {
 const light = {
   ...sharedTheme,
   color: {
-    primary: {
-      name: 'dark_blue',
-      value: '#001730'
-    },
-    secondary: {
-      name: 'sea_green',
-      value: '#4AD7D1'
-    },
-    terciary: {
-      name: 'red',
-      value: '#FE4A49'
-    },
+    one: "#ff9d47", // orange
+    two: "#4393fa" // blue
   }
 };
 

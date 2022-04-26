@@ -12,7 +12,8 @@ const initialState = {
   list: [],
   item: {
     recipe_id: null,
-    recipe_likes: []
+    recipe_likes: [],
+    recipe_comments: []
   }
 }
 
@@ -304,6 +305,93 @@ export const RecipeReducer = (state = initialState, action) => {
         item: action.payload.recipe
       }
     case ACTION.UPDATE.BY.RECIPE.ID.FAIL:
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          loading: false,
+          error: {
+            ...state.status.error,
+            message: action.payload.error.message
+          }
+        }
+      }
+    
+    case ACTION.CREATE.COMMENT.START:
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          loading: true,
+          error: {
+            ...state.status.error,
+            message: ''
+          }
+        }
+      }
+    case ACTION.CREATE.COMMENT.SUCCESS:
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          loading: false,
+          error: {
+            ...state.status.error,
+            message: ''
+          }
+        },
+        item: {
+          ...state.item,
+          recipe_comments: [
+            action.payload.recipe_comment,
+            ...state.item.recipe_comments
+          ]
+        }
+      }
+    case ACTION.CREATE.COMMENT.FAIL:
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          loading: false,
+          error: {
+            ...state.status.error,
+            message: action.payload.error.message
+          }
+        }
+      }
+
+    case ACTION.DELETE.COMMENT.START:
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          loading: true,
+          error: {
+            ...state.status.error,
+            message: ''
+          }
+        }
+      }
+
+    case ACTION.DELETE.COMMENT.SUCCESS:
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          loading: false,
+          error: {
+            ...state.status.error,
+            message: ''
+          }
+        },
+        item: {
+          ...state.item,
+          recipe_comments: state.item.recipe_comments.filter(c => c.recipe_comment_id !== action.payload.recipe_comment_id)
+        }
+      }
+
+    case ACTION.DELETE.COMMENT.FAIL:
       return {
         ...state,
         status: {
