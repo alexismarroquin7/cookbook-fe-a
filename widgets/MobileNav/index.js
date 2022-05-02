@@ -9,8 +9,11 @@ import {
   AccountCircle as AccountCircleIcon
 } from '@mui/icons-material';
 import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import { Popover, Typography } from "@mui/material";
+import { useToggle } from "../../hooks";
+import { UserAction } from "../../store";
 
 const classes = {
   icon: {
@@ -19,35 +22,47 @@ const classes = {
 }
 
 const initialSelected = 'home';
+const initialAnchorEl = null;
 
 export const MobileNav = () => {
   const router = useRouter();
-  const auth = useSelector(s => s.auth);
-  
+  const { auth, user } = useSelector(s => {
+    return {
+      auth: s.auth,
+      user: s.user
+    }
+  });
+
   const [selected, setSelected] = useState(initialSelected);
+  const [unread, setUnread] = useState(0);
+  
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const { route } = router;
+    setUnread(user.feed.activity.list.filter(it => it.read === false).length)
+    
+    if(selected !== 'activity') return;
+    
+    user.feed.activity.list.forEach(item => {
+      if(item.read === false) {
 
-    if(route.slice(0, 1) === '/'){
-      setSelected('home');
-    } else if(route.slice(0, 8) === '/explore'){
-      setSelected('explore');
-    } else if(route.slice(0, 15) === '/[username]/new'){
-      setSelected('new');
-    } else if(route.slice(0, 20) === '/[username]/activity'){
-      setSelected('activity');
-    } else if(route.slice(0, 11) === '/[username]'){
-      setSelected('account');
-    }
+        if(item.type === 'recipe_like'){
+          dispatch(UserAction.markRecipeLikeAsRead(item.recipe_like_id));
+        
+        } else if (item.type === 'recipe_comment'){
+          dispatch(UserAction.markRecipeCommentAsRead(item.recipe_comment_id));
+        }
+      }
+    });
 
-  }, [router, router.route]);
+  }, [dispatch, selected, user.feed])
 
   return (
   <Section>
     <Grid
       width="100%"
       justify="space-between"
+      align="center"
       padding="1rem"
       position="fixed"
       bottom="0"
@@ -61,6 +76,7 @@ export const MobileNav = () => {
         }}
         onClick={() => {
           router.push('/');
+          setSelected('home');
         }}
       />
       
@@ -71,6 +87,7 @@ export const MobileNav = () => {
         }}
         onClick={() => {
           router.push('/explore');
+          setSelected('explore');
         }}
       />
       
@@ -82,20 +99,41 @@ export const MobileNav = () => {
         onClick={() => {
           if(!auth.loggedIn) return;
           router.push(`/${auth.user.username}/new/recipe`);
+          setSelected('new');
         }}
       />
       
       {selected !== 'activity' ? (
-        <FavoriteBorderIcon 
-          sx={{
-            ...classes.icon,
-            color: '#c9c9c9'
-          }}
-          onClick={() => {
-            if(!auth.loggedIn) return;
-            router.push(`/${auth.user.username}/activity`);
-          }}
-        />
+        <Grid
+          direction="column wrap"
+          align="center"
+        >
+
+          {unread > 0 && (
+          <Grid
+            bgColor="red"
+            color="white"
+            padding=".1rem .4rem"
+            borderRadius="5px"
+          >
+            <Typography>{unread}</Typography>
+          </Grid>
+          )}
+
+          <FavoriteBorderIcon
+            id="mobile_nav__favorite_border_icon"
+            sx={{
+              ...classes.icon,
+              color: '#c9c9c9'
+            }}
+            onClick={() => {
+              if(!auth.loggedIn) return;
+              router.push(`/${auth.user.username}/activity`);
+              setSelected('activity');
+            }}
+          />
+        
+        </Grid>
       ) : (
         <FavoriteIcon 
           sx={classes.icon}
@@ -110,6 +148,7 @@ export const MobileNav = () => {
         onClick={() => {
           if(!auth.loggedIn) return;
           router.push(`/${auth.user.username}`);
+          setSelected('account');
         }}
       />
     </Grid>

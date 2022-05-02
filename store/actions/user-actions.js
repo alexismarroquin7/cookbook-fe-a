@@ -29,6 +29,40 @@ export const ACTION = {
         }
       }
     }
+  },
+  GET: {
+    FEED: {
+      HOME: {
+        START: "USER__GET__FEED__HOME--START",
+        SUCCESS: "USER__GET__FEED__HOME--SUCCESS",
+        FAIL: "USER__GET__FEED__HOME--FAIL"
+      },
+      ACTIVITY: {
+        START: "USER__GET__FEED__ACTIVITY--START",
+        SUCCESS: "USER__GET__FEED__ACTIVITY--SUCCESS",
+        FAIL: "USER__GET__FEED__ACTIVITY--FAIL"
+      }
+    }
+  },
+  MARK: {
+    RECIPE_LIKE: {
+      AS: {
+        READ: {
+          START: "USER__MARK__RECIPE_LIKE__AS__READ--START",
+          SUCCESS: "USER__MARK__RECIPE_LIKE__AS__READ--SUCCESS",
+          FAIL: "USER__MARK__RECIPE_LIKE__AS__READ--FAIL",
+        }
+      }
+    },
+    RECIPE_COMMENT: {
+      AS: {
+        READ: {
+          START: "USER__MARK__RECIPE_COMMENT__AS__READ--START",
+          SUCCESS: "USER__MARK__RECIPE_COMMENT__AS__READ--SUCCESS",
+          FAIL: "USER__MARK__RECIPE_COMMENT__AS__READ--FAIL",
+        }
+      }
+    }
   }
 };
 
@@ -117,9 +151,135 @@ const follow = ({ follower_id, user_id }) => async dispatch => {
   }
 }
 
+const getHomeFeed = (user_id) => async dispatch => {
+  dispatch({
+    type: ACTION.GET.FEED.HOME.START
+  });
+  
+  try {
+    const res = await axios().get(`/users/${user_id}/feed/home`);
+    dispatch({
+      type: ACTION.GET.FEED.HOME.SUCCESS,
+      payload: {
+        homeFeed: res.data
+      }
+    });
+  } catch (err) {
+    dispatch({
+      type: ACTION.GET.FEED.HOME.FAIL,
+      payload: {
+        error: {
+          message: err.response.data.message
+        }
+      }
+    });
+  }
+}
+
+const getActivityFeed = (user_id) => async dispatch => {
+  dispatch({
+    type: ACTION.GET.FEED.ACTIVITY.START
+  });
+  
+  try {
+    const res = await axios().get(`/users/${user_id}/feed/activity`);
+    
+    let activities = [
+      ...res.data.recipe_likes.map(it => {
+        return {
+          ...it,
+          type: 'recipe_like'
+        }
+      }),
+      ...res.data.recipe_comments.map(it => {
+        return {
+          ...it,
+          type: 'recipe_comment'
+        }
+      })
+    ];
+
+    activities = activities.sort((a, b) => b.created_at - a.created_at);
+
+    dispatch({
+      type: ACTION.GET.FEED.ACTIVITY.SUCCESS,
+      payload: {
+        activityFeed: activities
+      }
+    });
+  } catch (err) {
+    dispatch({
+      type: ACTION.GET.FEED.ACTIVITY.FAIL,
+      payload: {
+        error: {
+          message: err.response.data.message
+        }
+      }
+    });
+  }
+}
+
+const markRecipeLikeAsRead = (recipe_like_id) => async dispatch => {
+  dispatch({
+    type: ACTION.MARK.RECIPE_LIKE.AS.READ.START
+  })
+
+  try {
+    const res = await axios().put(`/recipe_likes/${recipe_like_id}`, { read: true });
+
+    dispatch({
+      type: ACTION.MARK.RECIPE_LIKE.AS.READ.SUCCESS,
+      payload: {
+        recipe_like: res.data
+      }
+    })
+
+  } catch (err) {
+    dispatch({
+      type: ACTION.MARK.RECIPE_LIKE.AS.READ.FAIL,
+      payload: {
+        error: {
+          message: err.response.data.message
+        }
+      }
+    })
+  }
+}
+
+const markRecipeCommentAsRead = (recipe_comment_id) => async dispatch => {
+  dispatch({
+    type: ACTION.MARK.RECIPE_COMMENT.AS.READ.START
+  })
+
+  try {
+    const res = await axios().put(`/recipe_comments/${recipe_comment_id}`, { read: true });
+
+    dispatch({
+      type: ACTION.MARK.RECIPE_COMMENT.AS.READ.SUCCESS,
+      payload: {
+        recipe_comment: res.data
+      }
+    })
+
+  } catch (err) {
+    dispatch({
+      type: ACTION.MARK.RECIPE_COMMENT.AS.READ.FAIL,
+      payload: {
+        error: {
+          message: err.response.data.message
+        }
+      }
+    })
+  }
+}
+
 export const UserAction = {
   ACTION,
   findByUsername,
   deleteFollowByUserFollowerId,
-  follow
+  follow,
+  getHomeFeed,
+  getActivityFeed,
+  markRecipeLikeAsRead,
+  markRecipeCommentAsRead
 }

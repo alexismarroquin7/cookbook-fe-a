@@ -31,7 +31,7 @@ export default function UserFollowings() {
 
   const UserFollowingItem = ({
     user_following: {
-      follow
+      followed
     }
   }) => {
     return (
@@ -56,14 +56,14 @@ export default function UserFollowings() {
           <Typography
             variant="h6"
           >
-            {follow.display_name}
+            {followed.display_name}
           </Typography>
         
           <Link
-            href={`/${follow.username}`}
+            href={`/${followed.username}`}
             passHref
           >  
-            <a>@{follow.username}</a>
+            <a>@{followed.username}</a>
           </Link>
 
         </Grid>
