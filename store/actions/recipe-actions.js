@@ -75,12 +75,33 @@ const ACTION = {
   }
 }
 
-const findAll = () => async dispatch => {
+const findAll = ({
+  name = '',
+  tag = ''
+}) => async dispatch => {
+  
   dispatch({
     type: ACTION.FIND.ALL.START
   });
+
   try {
-    const res = await axios().get('/recipes');
+    let query = '?';
+    
+    if(name){
+      query += `name=${name}`;
+    } else if(tag){
+      query += `tag=${tag}`;
+    }
+
+    let queryToUse;
+    
+    if(query.length === 1){
+      queryToUse = '';
+    } else {
+      queryToUse = query;
+    }
+
+    const res = await axios().get(`/recipes${queryToUse}`);
     dispatch({
       type: ACTION.FIND.ALL.SUCCESS,
       payload: {

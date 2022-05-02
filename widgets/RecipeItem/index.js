@@ -15,10 +15,11 @@ import { useRouter } from "next/router";
 // utils
 import { getDurationText } from "../../utils";
 import { Paper, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 
-export const RecipeItem = ({recipe}) => {
+export const RecipeItem = ({recipe = {}}) => {
   const router = useRouter();
-
+  
   const {
     auth
   } = useSelector(s => {
@@ -30,11 +31,21 @@ export const RecipeItem = ({recipe}) => {
         }
       }
     }
-  })
+  });
+
+  const [likedByUser, setLikedByUser] = useState(false);
+  
+  useEffect(() => {
+    if(!auth.user.user_id) return;
+    setLikedByUser(
+      new Set(recipe.recipe_likes.map(rp_like => rp_like.user.user_id))
+      .has(auth.user.user_id)
+    );
+  }, [recipe.recipe_likes, auth.user.user_id]);
 
   return (
-  <Paper
-    elevation={2}
+  <Grid
+    // elevation={2}
   >
     <Grid  
       width="100%"
@@ -130,7 +141,7 @@ export const RecipeItem = ({recipe}) => {
         align="center"
       >
         
-        {recipe.recipe_likes && new Set(recipe.recipe_likes.map(rp_like => rp_like.user.user_id)).has(auth.user.user_id) ? (
+        {likedByUser ? (
           <FavoriteIcon 
             style={{
               color: "#fb3958"
@@ -188,6 +199,6 @@ export const RecipeItem = ({recipe}) => {
         })}
       </Grid>
     </Grid>
-  </Paper>
+  </Grid>
   )
 }

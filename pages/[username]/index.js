@@ -6,7 +6,9 @@ import { Section, Grid } from "../../components";
 import { RecipeAction, UserAction } from "../../store";
 
 // icons
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import {
+  AccountCircle as AccountCircleIcon
+} from '@mui/icons-material';
 
 // hooks
 import { useRouter } from "next/router";
@@ -22,6 +24,7 @@ import {
 
 import { RecipeList } from "../../widgets/RecipeList";
 import { UnfollowUserModal } from "../../widgets";
+import Head from "next/head";
 
 export default function UserProfile () {
 
@@ -70,18 +73,19 @@ export default function UserProfile () {
         align="center"
         gap="1rem"
       >
+        <Head>
+          <title>@{user.item.username} | Cookbook</title>
+        </Head>
 
         <Grid
           width="100%"
-          gap="1rem"
+          gap="4rem"
           align="center"
-          justify="space-between"
         >
           
           <AccountCircleIcon
-            sx={{fontSize: "6rem"}}
+            sx={{fontSize: "8rem"}}
           />
-          
 
           <Grid
             direction="column wrap"
@@ -139,7 +143,7 @@ export default function UserProfile () {
             
             <Grid
               width="100%"
-              // gap="1rem"
+              gap="2rem"
               justify="space-between"
             >
               <Grid
